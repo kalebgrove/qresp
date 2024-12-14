@@ -14,10 +14,8 @@ root.render(
   <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        {/* <Route path="/questions" element={<Questions />} /> */}
-        <Route path="/questions" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
-        {/* <Route path="/questions" element={} /> */}
       </Routes>
     </Router>
 );
