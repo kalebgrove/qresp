@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
+import Cookies from 'js-cookie';
 
 function Login() {
   // State to track the selected form
@@ -52,6 +53,7 @@ function Login() {
       const result = await response.json();
       console.log(result); // Handle successful login
 
+      Cookies.set('user', JSON.stringify(result.user), { expires: 7 }); // Expires in 7 days
       navigate('/questions');
 
     } catch (error) {
@@ -148,6 +150,7 @@ function Login() {
               !email || !password || !confirmPassword || password !== confirmPassword
               }>Next</button>
           </form>
+          
           ) : (
             <form onSubmit={handleSubmitReg}>
             <input type="text" id="firstname" className='first-cl' placeholder='First Name' value={firstname} onChange={(e) => setFirstName(e.target.value)}/>
@@ -163,11 +166,18 @@ function Login() {
             <button className={`register-bt ${!isLogin ? 'active' : ''}`}>Register</button>
           </form>
           )}
-          
-          <div className="step-indicator">
-            <div className={`circle ${!secondStep ? 'active' : ''}`} onClick={() => setStep(false)}></div>
-            <div className={`circle ${secondStep ? 'active' : ''}`}></div>
-          </div>
+          {!isLogin && (
+            <div className="step-indicator">
+              <div
+                className={`circle ${!secondStep ? 'active' : ''}`}
+                onClick={() => setStep(false)} // Navigate to first step
+              ></div>
+              <div
+                className={`circle ${secondStep ? 'active' : ''}`}
+                onClick={() => setStep(true)} // Navigate to second step
+              ></div>
+            </div>
+          )}
         {error && <p style={{ color: 'red' }}>{thereisError ? error : ''}</p>}
       </div>
     </div>
