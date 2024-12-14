@@ -57,7 +57,19 @@ app.post('/get-usr-data', async(req, res) => {
       }
 
       const usr = rows[0];
-      
+
+      console.log(usr.age);
+
+      res.status(200).json({
+        dni: usr.dni,
+        firstname: usr.firstname,
+        lastname: usr.lastname,
+        age: usr.age,
+        sex: usr.sex,
+        email: usr.email,
+        number: usr.telephone
+      });
+
     });
 
   } catch(err) {
@@ -93,8 +105,8 @@ app.post('/login', async (req, res) => {
       // Compare the provided password with the hashed password
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(401).json({ error: 'Invalid email or password' });
         console.log(user.email);
+        return res.status(401).json({ error: 'Invalid email or password' });
       }
 
       // If login is successful, respond with user details (excluding sensitive info)

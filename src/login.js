@@ -54,7 +54,7 @@ function Login() {
       console.log(result); // Handle successful login
 
       Cookies.set('user', JSON.stringify(result.user), { expires: 7 }); // Expires in 7 days
-      navigate('/questions');
+      navigate('/home');
 
     } catch (error) {
       console.error(error);
@@ -106,7 +106,7 @@ function Login() {
       
       Cookies.set('user', JSON.stringify(result.user), { expires: 7 }); // Expires in 7 days
 
-      navigate('/questions');
+      navigate('/home');
 
       // Handle success (e.g., redirect user, show success message)
     } catch (error) {

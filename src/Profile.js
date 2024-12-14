@@ -36,19 +36,30 @@ function Profile() {
 
           const payload = { email: user.email };
 
-          const response = await fetch("http://localhost:3000/", {
-            method: "GET",
+          const response = await fetch("http://localhost:3000/get-usr-data", {
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${user.token}`, // Assuming the token is stored in the user object
             },
+            body: JSON.stringify(payload),
           });
   
           if (!response.ok) throw new Error("Failed to fetch user data.");
   
           const data = await response.json();
-          setName(data.name); // Set the user's name
-          setAge();
+
+          function formatDateToISO(date) {
+            let dob = new Date(date); // Ensure the date is a Date object
+          
+            return dob.toISOString().split('T')[0];
+          }
+          
+
+          const formattedDob = formatDateToISO(data.dob);
+          console.log(formattedDob);
+
+          setName(`${data.firstname} ${data.lastname}`);
+          setAge(formattedDob);
           setDNI(data.dni);
           setSex(data.sex);
           setEmail(data.email);
@@ -66,35 +77,18 @@ function Profile() {
   const storedPassword = 'password123';
 
   const accountDetails = {
-    "Nombre y Apellido": 'Juan Pérez',
-    DNI: '12345678X',
-    "Fecha de Nacimiento": '12/03/1990',
-    Sexo: 'Masculino',
-    "Correo Electrónico": 'juan.perez@example.com',
-    "Número de Teléfono": '+34 612 345 678',
+    "Nom i Cognom": name,
+    DNI: dni,
+    "Data de Naixement": age,
+    Sexe: sex,
+    "Correu Electrònic": email,
+    "Telèfon": number,
   };
 
   useEffect(() => {
     const savedImage = localStorage.getItem('profileImage');
     if (savedImage) setProfileImage(savedImage);
-
-    // Obtener el usuario desde las cookies
-    const user = Cookies.get('user'); // Obtén el nombre de usuario desde las cookies
-    if (user) {
-      fetchUserData(user); // Llama a la función para obtener los datos del backend
-    }
   }, []);
-
-  // Función para obtener los datos del backend
-  const fetchUserData = async (user) => {
-    try {
-      // Suponiendo que tienes un endpoint que devuelve los detalles del usuario
-      const response = await axios.post('/api/user', { user });
-      setUserDetails(response.data); // Establecer los datos del usuario obtenidos
-    } catch (error) {
-      console.error('Error al obtener los datos del usuario:', error);
-    }
-  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
