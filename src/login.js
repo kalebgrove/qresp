@@ -16,9 +16,16 @@ function Login() {
   const [sex, setSex] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [tel, setTel] = useState('');
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
+
+  const handleDateChange = (e) => {
+    const rawDate = e.target.value;
+    const formattedDate = new Date(rawDate).toLocaleDateString("en-CA");
+    setAge(formattedDate);
+  }
 
   const handleSubmitLog = async(event) => {
     event.preventDefault();
@@ -74,9 +81,9 @@ function Login() {
       return;
     }
 
-    console.log("Form Data:", { email, dni, firstname, lastname, age, sex, password });
+    console.log("Form Data:", { email, dni, firstname, lastname, age, sex, password, tel });
     
-    const payload = { email, password, firstname, lastname, dni, age, sex, confirmPassword };
+    const payload = { dni, firstname, lastname, age, tel, sex, email, password };
 
   // Send data to the backend using fetch
     try {
@@ -95,11 +102,14 @@ function Login() {
       const result = await response.json();
       console.log(result); // Handle the success response here
 
+      navigate('/questions');
+
       // Handle success (e.g., redirect user, show success message)
     } catch (error) {
       console.error(error);
       setError('An error occurred while submitting the form');
     }
+    
   }
 
   return (
@@ -114,7 +124,7 @@ function Login() {
         </button>
         <button 
           className={`register-header ${!isLogin ? 'active' : ''}`}
-          onClick={() => setIsLogin(false)} // Set to Register form
+          onClick={() => {setIsLogin(false); setStep(false);}} // Set to Register form
         >
           Register
         </button>
@@ -128,23 +138,36 @@ function Login() {
             <input type="password" id="pwd" className="pwd-cl" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
             <button className='login-bt-active'>Login</button>
           </form>
-        ) : (
-          <form onSubmit={handleSubmitReg}>
+        ) : !secondStep ? (
+            <form>
+              
+              <input type="text" id="email" className="email-cl" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+              <input type="password" id="pwd" className="pwd-cl" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+              <input type="password" id="confirm-pwd" className="pwd-cl" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
+              <button className={`register-bt ${!isLogin ? 'active' : ''}`} onClick={() => setStep(true)} disabled={
+              !email || !password || !confirmPassword || password !== confirmPassword
+              }>Next</button>
+          </form>
+          ) : (
+            <form onSubmit={handleSubmitReg}>
             <input type="text" id="firstname" className='first-cl' placeholder='First Name' value={firstname} onChange={(e) => setFirstName(e.target.value)}/>
             <input type="text" id="lastname" className='last-cl' placeholder='Last Name' value={lastname} onChange={(e) => setLastName(e.target.value)}/>
             <input type="text" id="identifier" className='id-cl' placeholder='National Document Number' value={dni} onChange={(e) => setDni(e.target.value)}/>
-            <input type="text" id="email" className="email-cl" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-            <input type="password" id="pwd" className="pwd-cl" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-            <input type="password" id="confirm-pwd" className="pwd-cl" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
-            <input type="number" id="age" className='age-cl' placeholder="Age" value={age} onChange={(e) => setAge(e.target.value)}/>
+            <input type="date" id="age" className='age-cl' placeholder="Date of Birth" value={age} onChange={handleDateChange}/>
+            <input type="text" id='tel' className='tel-cl' placeholder='Number (+34)' value={tel} onChange={(e) => setTel(e.target.value)} />
             <select type="text" id="sex" className='sex-cl' placeholder="Sex (M/F)" value={sex} onChange={(e) => setSex(e.target.value)}>
+              <option className="sex-select">Sex</option>
               <option value="M">M</option>
               <option value="F">F</option>
             </select>
             <button className={`register-bt ${!isLogin ? 'active' : ''}`}>Register</button>
           </form>
+          )}
           
-        )}
+          <div className="step-indicator">
+            <div className={`circle ${!secondStep ? 'active' : ''}`} onClick={() => setStep(false)}></div>
+            <div className={`circle ${secondStep ? 'active' : ''}`}></div>
+          </div>
         {error && <p style={{ color: 'red' }}>{thereisError ? error : ''}</p>}
       </div>
     </div>

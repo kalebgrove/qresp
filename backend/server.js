@@ -77,15 +77,11 @@ app.post('/login', async (req, res) => {
 
 // Register endpoint
 app.post('/register', async (req, res) => {
-  const { email, password, firstname, lastname, dni, age, sex, confirmPassword } = req.body;
+  const { dni, firstname, lastname, age, tel, sex, email, password } = req.body;
 
   // Validate the received data
-  if (!dni || !firstname || !lastname || !age || !sex || !email || !password || !confirmPassword) {
+  if (!dni || !firstname || !lastname || !age || !sex || !email || !password) {
     return res.status(400).json({ error: 'All fields are required' });
-  }
-
-  if (password !== confirmPassword) {
-    return res.status(400).json({ error: 'Passwords do not match' });
   }
 
   try {
@@ -99,8 +95,8 @@ app.post('/register', async (req, res) => {
         return res.status(500).json({ error: 'Failed to register user' });
       }
 
-      const userInfoQuery = "INSERT INTO user_info (dni, firstname, lastname, sex, age) VALUES (?, ?, ?, ?, ?)";
-      connection.query(userInfoQuery, [dni, firstname, lastname, sex, age], (err) => {
+      const userInfoQuery = "INSERT INTO user_info (dni, firstname, lastname, dob, telephone, sex) VALUES (?, ?, ?, ?, ?, ?)";
+      connection.query(userInfoQuery, [dni, firstname, lastname, age, tel, sex], (err) => {
         if (err) {
           console.error('Error inserting user info:', err.stack);
           return connection.rollback(() => {

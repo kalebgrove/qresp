@@ -72,7 +72,7 @@ body {
 }
 
 /* Styling for email and password input fields */
-.email-cl, .pwd-cl, .age-cl, .sex-cl, .first-cl, .last-cl, .id-cl {
+.email-cl, .pwd-cl, .age-cl, .sex-cl, .first-cl, .last-cl, .id-cl, .tel-cl {
     font-family: 'OpenSans';
     width: 93%; /* Make input take full width of the container */
     border-radius: 4px; /* Make the border slightly rounded */
@@ -100,4 +100,28 @@ body {
 
 .login select {
     width: 100%;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ccc; /* Default color */
+    margin: 0 5px;
+    transition: background-color 0.4s ease;
+  }
+  
+  .circle.active {
+    background-color: #4caf50; /* Active step color */
+  }
+  
+.sex-select {
+    color: grey;
 }
