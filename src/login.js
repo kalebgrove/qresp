@@ -103,6 +103,8 @@ function Login() {
 
       const result = await response.json();
       console.log(result); // Handle the success response here
+      
+      Cookies.set('user', JSON.stringify(result.user), { expires: 7 }); // Expires in 7 days
 
       navigate('/questions');
 

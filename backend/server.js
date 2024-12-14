@@ -41,6 +41,29 @@ app.post('/get-usr-data', async(req, res) => {
   if(!email) {
     return res.status(400).json({ error: 'Email is not returned'});
   }
+
+  try {
+    const query = "SELECT * FROM user_info ui natural inner join user_login ul where ul.email = ?";
+    connection.query(query, [email], async (err, rows) => {
+      if(err) {
+        console.log("Error fetching user data");
+        return res.status(401).json({error: 'Failed to get data'});
+
+      }
+
+      if(rows.length === 0) {
+        console.error("No data to fetch");
+        return res.status(402).json({error: 'Failed to get data'});
+      }
+
+      const usr = rows[0];
+      
+    });
+
+  } catch(err) {
+    console.error(err);
+    res.status(500).json({error: 'Error'});
+  }
 })
 
 // Login endpoint
