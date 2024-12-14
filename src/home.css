@@ -1,0 +1,126 @@
+/* Questionnaire */
+body {
+    font-family: 'OpenSans', sans-serif; /* Set font globally */
+    width: 100%;
+}
+
+.questionnaire {
+    margin-top: 20px;
+  }
+  
+  .questionnaire h2 {
+    font-family: 'OpenSans';
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .questionnaire label {
+    font-family: 'OpenSans';
+  }
+  
+  .questionnaire button {
+    font-family: 'OpenSans';
+  }
+  
+  .selected-mpids-top {
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  /* Align question and options on the same line */
+  .question {
+    display: flex; /* Enables horizontal alignment */
+    justify-content: space-between; /* Creates space between question and options */
+    align-items: center; /* Centers vertically */
+    margin-bottom: 15px;
+    padding: 10px 0; /* Adds spacing between rows */
+    border-bottom: 1px solid #ddd; /* Optional: Adds a subtle divider */
+  }
+  
+  .question p {
+    margin: 0;
+    flex: 1; /* Allows the question text to take available space */
+    color: #333;
+    font-size: 16px;
+  }
+  
+  /* Options aligned horizontally */
+  .question-options {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds space between the Yes/No options */
+  }
+  
+  .question-options label {
+    font-family: 'OpenSans';
+    display: flex;
+    align-items: center; /* Aligns the radio button and text */
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .question-options input {
+    margin-right: 5px; /* Space between the radio button and the label text */
+  }
+  
+  /* Finalize Button */
+  .finalize-button {
+    margin-top: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .finalize-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Result */
+  .result {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+  }
+
+  .header {
+    display: flex; /* Enables flexbox layout */
+    width: 100vh;
+    align-items: center; /* Centers items vertically */
+    justify-content: center; /* Centers the header text horizontally */
+    position: relative; /* Allows positioning the "Tornar" button */
+    padding: 20px; /* Adds some padding around the header */
+  }
+  
+  .back {
+    font-family: 'OpenSans', sans-serif;
+    background-color: transparent;
+    border-radius: 8px; /* Rounded corners */
+    height: 30px;
+    padding: 5px 15px; /* Adjust spacing inside the button */
+    cursor: pointer;
+    position: absolute; /* Allows positioning independently of the header layout */
+    left: 20px; /* Pins the button to the left */
+    top: 50%; /* Aligns vertically */
+    transform: translateY(-50%); /* Corrects vertical alignment */
+    font-size: 14px; /* Makes the text size consistent */
+  }
+  
+  .header h2 {
+    font-family: 'OpenSans', sans-serif;
+    font-size: 24px;
+    color: #333;
+    margin: 0; /* Removes default margin for better centering */
+    text-align: center;
+  }
+  
+  

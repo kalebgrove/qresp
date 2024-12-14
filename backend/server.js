@@ -35,6 +35,14 @@ app.use(cors({
   credentials: true, // Include credentials (if needed)
 }));
 
+app.post('/get-usr-data', async(req, res) => {
+  const { email } = req.body;
+
+  if(!email) {
+    return res.status(400).json({ error: 'Email is not returned'});
+  }
+})
+
 // Login endpoint
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
