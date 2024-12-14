@@ -54,12 +54,11 @@ function Profile() {
             return dob.toISOString().split('T')[0];
           }
           
-
-          const formattedDob = formatDateToISO(data.dob);
-          console.log(formattedDob);
+          //const formattedDob = formatDateToISO(data.dob);
+          console.log(data.age);
 
           setName(`${data.firstname} ${data.lastname}`);
-          setAge(formattedDob);
+          setAge(data.age);
           setDNI(data.dni);
           setSex(data.sex);
           setEmail(data.email);

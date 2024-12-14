@@ -43,7 +43,7 @@ app.post('/get-usr-data', async(req, res) => {
   }
 
   try {
-    const query = "SELECT * FROM user_info ui natural inner join user_login ul where ul.email = ?";
+    const query = "SELECT ui.dni, ui.firstname, ui.lastname, DATE_FORMAT(ui.dob, '%m/%d/%Y') AS formatted_dob, ui.sex, ui.telephone, ul.email FROM user_info ui natural inner join user_login ul where ul.email = ?";
     connection.query(query, [email], async (err, rows) => {
       if(err) {
         console.log("Error fetching user data");
@@ -58,13 +58,13 @@ app.post('/get-usr-data', async(req, res) => {
 
       const usr = rows[0];
 
-      console.log(usr.age);
+      console.log(usr.formatted_dob);
 
       res.status(200).json({
         dni: usr.dni,
         firstname: usr.firstname,
         lastname: usr.lastname,
-        age: usr.age,
+        age: usr.formatted_dob,
         sex: usr.sex,
         email: usr.email,
         number: usr.telephone
