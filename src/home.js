@@ -1,65 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import './home.css';
 
 const Home = () => {
+  const [profileImage, setProfileImage] = useState('/images/default-profile.jpg'); // Estado para la imagen de perfil
   const [availableMPIDs] = useState([
+    "Alveolitis Al·lèrgica Extrínseca",
+    "Bronquiolitis Obliterant",
+    "Fibrosi Pulmonar Associada a Esclerodèrmia",
+    "Fibrosi Pulmonar Associada a Malalties del Teixit Connectiu",
+    "Fibrosi Pulmonar Associada a Sarcoïdosi Crònica",
+    "Fibrosi Pulmonar Familiar",
     "Fibrosi Pulmonar Idiopàtica (FPI)",
-        "Pneumonitis d’Hipersensibilitat",
-        "Sarcoïdosi Pulmonar",
-        "Pneumònia Intersticial no Específica (PINE)",
-        "Pneumònia Organitzativa Criptogènica (COP)",
-        "Limfangioleiomiomatosi (LAM)",
-        "Histiocitosi de Cèl·lules de Langerhans",
-        "Alveolitis Al·lèrgica Extrínseca",
-        "Pneumoconiosi (Silicosi, Asbestosi, Pneumoconiosi del Carbó)",
-        "Fibrosi Pulmonar Associada a Malalties del Teixit Connectiu",
-        "Bronquiolitis Obliterant",
-        "Proteïnosi Alveolar Pulmonar",
-        "Malaltia Pulmonar Intersticial Associada a Sjögren",
-        "Malaltia Pulmonar Intersticial Associada a Dermatomiositis o Polimiositis",
-        "Malaltia Pulmonar Induïda per Fàrmacs (Methotrexat, Nitrofurantoïna, Amiodarona)",
-        "Fibrosi Pulmonar Familiar",
-        "Malaltia Pulmonar Granulomatosa Crònica",
-        "Limfangitis Carcinomatosa",
-        "Malaltia de Wilson Amb Afectació Pulmonar",
-        "Síndrome de Goodpasture (Hemorràgia Alveolar Difusa)",
-        "Síndrome de Churg-Strauss (Granulomatosi Eosinofílica Amb Poliangiitis)",
-        "Granulomatosi Amb Poliangiitis (Granulomatosi de Wegener)",
-        "Pneumònia Intersticial Descamativa",
-        "Pneumònia Intersticial Limfocítica",
-        "Fibrosi Pulmonar Post-Radioteràpia",
-        "Malaltia Pulmonar Relacionada amb la Síndrome de Sjögren",
-        "Hemorràgia Pulmonar Induïda per Lupus Eritematós Sistèmic",
-        "Síndrome de Caplan (Associada a la Pneumoconiosi i l’Artritis Reumatoide)",
-        "Síndrome de Hermansky-Pudlak (Associada a la Fibrosi Pulmonar i Albinisme)",
-        "Síndrome de Birt-Hogg-Dubé (Associada a Quists Pulmonars i Càncer Renal)",
-        "Síndrome de Blau (Sarcoïdosi Familiar)",
-        "Pneumopaties Intersticials Relacionades amb Metalls (Beril·liosi, Malaltia del Cobalt)",
-        "Fibrosi Pulmonar Associada a Esclerodèrmia",
-        "Malaltia Pulmonar Associada a la Síndrome d’Ehlers-Danlos",
-        "Fibrosi Pulmonar Secundària a Pneumònia Organitzada",
-        "Pneumonitis Induïda per Radiació",
-        "Fibrosi Pulmonar Post-COVID-19",
-        "Pneumopaties per Malalties Autoinflamatòries",
-        "Pneumonitis Limfocítica Subaguda",
-        "Pulmó de Granjer (Alveolitis per Exposició a Pols de Fenc)",
-        "Pulmó de Tòxic (Relacionat amb Químics Inhalats)",
-        "Pulmó de Carbó (Malaltia Relacionada amb la Mineria)",
-        "Síndrome de Löffler (Infiltrats Eosinofílics Transitòris)",
-        "Malaltia Pulmonar Relacionada amb Beril·liosi Crònica",
-        "Fibrosi Pulmonar Associada a Sarcoïdosi Crònica",
-        "Pneumonitis Eosinofílica Crònica",
-        "Pneumopaties Relacionades amb Pols de Talc",
-        "Malaltia Pulmonar Induïda per Metotrexat",
-        "Síndrome d’Hemorràgia Pulmonar Idiopàtica",
-        "Pneumonitis Associada a Lupus Eritematós Sistèmic",
-        "Pneumopatia Associada a Síndrome de Sjögren Secundari",
-        "Pneumopatia Associada a Artritis Reumatoide",
-        "Síndrome de Felty amb Afectació Pulmonar",
-        "Histiocitosi Pulmonar Cel·lular",
-        "Quists Pulmonars Associats a Malalties Intersticials",
-        "Malaltia Pulmonar Mixta (Restrictiva i Obstructiva)"
+    "Fibrosi Pulmonar Post-COVID-19",
+    "Fibrosi Pulmonar Post-Radioteràpia",
+    "Fibrosi Pulmonar Secundària a Pneumònia Organitzada",
+    "Granulomatosi Amb Poliangiitis (Granulomatosi de Wegener)",
+    "Hemorràgia Pulmonar Induïda per Lupus Eritematós Sistèmic",
+    "Histiocitosi de Cèl·lules de Langerhans",
+    "Histiocitosi Pulmonar Cel·lular",
+    "Limfangioleiomiomatosi (LAM)",
+    "Limfangitis Carcinomatosa",
+    "Malaltia de Wilson Amb Afectació Pulmonar",
+    "Malaltia Pulmonar Associada a la Síndrome d’Ehlers-Danlos",
+    "Malaltia Pulmonar Granulomatosa Crònica",
+    "Malaltia Pulmonar Induïda per Metotrexat",
+    "Malaltia Pulmonar Intersticial Associada a Dermatomiositis o Polimiositis",
+    "Malaltia Pulmonar Intersticial Associada a Sjögren",
+    "Malaltia Pulmonar Mixta (Restrictiva i Obstructiva)",
+    "Malaltia Pulmonar Relacionada amb Beril·liosi Crònica",
+    "Malaltia Pulmonar Relacionada amb la Síndrome de Sjögren",
+    "Malaltia Pulmonar Secundària a Pneumònia Organitzada",
+    "Pneumoconiosi (Silicosi, Asbestosi, Pneumoconiosi del Carbó)",
+    "Pneumonitis Associada a Lupus Eritematós Sistèmic",
+    "Pneumonitis d’Hipersensibilitat",
+    "Pneumonitis Eosinofílica Crònica",
+    "Pneumonitis Induïda per Radiació",
+    "Pneumonitis Limfocítica Subaguda",
+    "Pneumopaties Intersticials Relacionades amb Metalls (Beril·liosi, Malaltia del Cobalt)",
+    "Pneumopaties per Malalties Autoinflamatòries",
+    "Pneumopaties Relacionades amb Pols de Talc",
+    "Pneumònia Intersticial Descamativa",
+    "Pneumònia Intersticial Limfocítica",
+    "Pneumònia Intersticial no Específica (PINE)",
+    "Pneumònia Organitzativa Criptogènica (COP)",
+    "Proteïnosi Alveolar Pulmonar",
+    "Pulmó de Carbó (Malaltia Relacionada amb la Mineria)",
+    "Pulmó de Granjer (Alveolitis per Exposició a Pols de Fenc)",
+    "Pulmó de Tòxic (Relacionat amb Químics Inhalats)",
+    "Sarcoïdosi Pulmonar",
+    "Síndrome d’Hemorràgia Pulmonar Idiopàtica",
+    "Síndrome de Blau (Sarcoïdosi Familiar)",
+    "Síndrome de Birt-Hogg-Dubé (Associada a Quists Pulmonars i Càncer Renal)",
+    "Síndrome de Caplan (Associada a la Pneumoconiosi i l’Artritis Reumatoide)",
+    "Síndrome de Churg-Strauss (Granulomatosi Eosinofílica Amb Poliangiitis)",
+    "Síndrome de Felty amb Afectació Pulmonar",
+    "Síndrome de Goodpasture (Hemorràgia Alveolar Difusa)",
+    "Síndrome de Hermansky-Pudlak (Associada a la Fibrosi Pulmonar i Albinisme)",
+    "Síndrome de Löffler (Infiltrats Eosinofílics Transitòris)"
   ]);
 
   const [selectedMPIDs, setSelectedMPIDs] = useState(() => {
@@ -75,14 +73,17 @@ const Home = () => {
     { id: 3, question: "Has perdut pes últimament?", answer: "" },
     { id: 4, question: "Et sents fatigat?", answer: "" },
     { id: 5, question: "Tens molts mocs?", answer: "" },
-    { id: 6, question: 'Tens el nas tapat?', answer: '' },
-    { id: 7, question: 'Et fa malt la gola?', answer: '' },
-    { id: 8, question: 'Tens febre?', answer: '' },
-    { id: 9, question: 'Presentes dolor toràsic?', answer: '' },
-    { id: 10, question: 'Sents xiulets quan respires?', answer: '' },
   ]);
 
   const [result, setResult] = useState("");
+
+  useEffect(() => {
+    // Recupera la imagen de perfil desde localStorage
+    const savedProfileImage = localStorage.getItem("profileImage");
+    if (savedProfileImage) {
+      setProfileImage(savedProfileImage);
+    }
+  }, []);
 
   const saveMPIDs = (mpids) => {
     Cookies.set("mpids", JSON.stringify(mpids), { expires: 365 });
@@ -114,22 +115,22 @@ const Home = () => {
     const positiveAnswers = questions.filter((q) => q.answer === "yes").length;
 
     if (positiveAnswers >= 2) {
-      setResult(
-        `Amb les respostes seleccionades i els MPIDs (${selectedMPIDs.join(
-          ", "
-        )}), recomanem una consulta mèdica urgent.`
-      );
+      setResult(`Consulta mèdica urgent recomanada amb els MPIDs seleccionats (${selectedMPIDs.join(", ")})`);
     } else {
-      setResult(
-        `El teu estat sembla estable. Els MPIDs seleccionats (${selectedMPIDs.join(
-          ", "
-        )}) no indiquen una urgència immediata.`
-      );
+      setResult(`Els MPIDs seleccionats (${selectedMPIDs.join(", ")}) no indiquen urgència immediata.`);
     }
   };
 
   return (
     <div className="home-container">
+      <div className="profile-button-container">
+        <a href="http://localhost:3000/profile">
+          <div className="profile-button">
+            <img src={profileImage} alt="Perfil" />
+          </div>
+        </a>
+      </div>
+
       {step === "select" && (
         <div className="mpid-selector">
           <h2>Seleccioneu les vostres MPIDs</h2>
@@ -164,14 +165,13 @@ const Home = () => {
 
       {step === "questionnaire" && (
         <div className="questionnaire">
-            <div className='header'>
-                <button onClick={() => setStep("select")} className='back'>Tornar</button>
-                <h2>Com et trobes avui?</h2>
-                <img></img>
-            </div>
+          <div className="header">
+            <button onClick={() => setStep("select")} className="back">Tornar</button>
+            <h2>Com et trobes avui?</h2>
+          </div>
           <div>
             {questions.map((question) => (
-              <div key={question.id} className='question-options'>
+              <div key={question.id} className="question-options">
                 <p>{question.question}</p>
                 <label>
                   <input
@@ -196,7 +196,7 @@ const Home = () => {
               </div>
             ))}
           </div>
-          <button onClick={calculateResult} className='send'>Enviar</button>
+          <button onClick={calculateResult} className="send">Enviar</button>
           {result && <p>{result}</p>}
         </div>
       )}
