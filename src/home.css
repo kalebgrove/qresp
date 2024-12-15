@@ -28,28 +28,25 @@
 
   .selected-mpids span {
     display: inline-block;
-    border-radius: 8px; /* Bordes más pequeños */
-    padding: 5px 8px; /* Tamaño compacto */
-    margin-right: 5px; /* Espaciado reducido */
-    margin-bottom: 5px; /* Espaciado reducido */
+    border-radius: 10px; /* Bordes más suaves */
+    padding: 5px 10px; /* Tamaño compacto */
+    margin-right: 6px; /* Espaciado reducido */
+    margin-bottom: 6px; /* Espaciado reducido */
     font-size: 12px; /* Fuente más pequeña */
     color: #FFFFFF; /* Texto blanco */
     font-weight: bold;
     background: linear-gradient(145deg, #66bb6a, #57a65a); /* Fondo con degradado */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Sombra ligera */
     cursor: pointer;
     transition: all 0.3s ease;
-    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-    max-width: 200px; /* Máximo ancho reducido */
-    overflow: hidden; /* Oculta el texto desbordante */
-    text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es demasiado largo */
+    white-space: nowrap; /* Evita saltos de línea */
     text-align: center; /* Centra el texto */
   }
 
   .selected-mpids span:hover {
     background-color: #81C784; /* Verde claro al pasar el ratón */
-    transform: translateY(-2px); /* Efecto de elevación */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+    transform: translateY(-3px); /* Elevación al hacer hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Sombra aumentada */
   }
 
   /* Questionnaire */
@@ -274,7 +271,7 @@
     border-radius: 10px;
     cursor: pointer;
     background-color: transparent;
-    color: #66BB6A;
+    color: #ffffff;
   }
 
   .back:hover {
@@ -401,12 +398,16 @@ button:active {
 /* Selected MPIDs */
 .selected-mpids {
   margin-top: 20px;
-  padding: 15px;
+  padding: 15px 20px; /* Espacio interno ajustado */
   background: #f9f9f9;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.5s ease-in-out;
-  text-align: center;
+  max-width: 100%; /* Ocupa todo el ancho disponible */
+  display: flex; /* Cambia a diseño de flexbox */
+  flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea */
+  gap: 8px; /* Espaciado entre elementos */
+  justify-content: flex-start; /* Alinea los elementos hacia la izquierda */
 }
 
 .selected-mpids h3 {
@@ -418,20 +419,31 @@ button:active {
 
 /* MPID Items */
 .mpid-item {
-  display: inline-flex;
+  display: flex; /* Flexbox para alinear texto y botón */
   align-items: center;
-  justify-content: center;
+  justify-content: space-between; /* Separa texto y botón */
   background: linear-gradient(145deg, #66bb6a, #57a65a);
   color: white;
-  border-radius: 15px;
-  padding: 8px 12px;
+  border-radius: 12px;
+  padding: 6px 10px;
   font-size: 12px;
   font-weight: 500;
-  margin: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.3s ease;
-  flex: 0 1 auto; /* Los elementos no se expanden más allá de su contenido */
-  max-width: 100%; /* Evita que se desborde */
+  flex: 0 1 auto;
+  max-width: 200px; /* Tamaño máximo */
+  white-space: nowrap; /* Evita saltos de línea */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  gap: 8px; /* Espacio entre texto y botón */
+}
+
+.mpid-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1; /* Ocupa el espacio disponible */
 }
 
 .mpid-item:hover {
@@ -443,16 +455,18 @@ button:active {
   background: none;
   border: none;
   color: white;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
-  margin-left: 8px;
   cursor: pointer;
+  flex-shrink: 0; /* Evita que el botón se reduzca */
+  margin-left: 8px; /* Espaciado entre texto y botón */
   transition: color 0.2s ease;
 }
 
 .mpid-item button:hover {
   color: #ffcccc;
 }
+
 
 /* Animations */
 @keyframes fadeIn {
