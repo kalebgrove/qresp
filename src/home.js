@@ -37,7 +37,7 @@ const Home = () => {
     "Pneumonitis Eosinofílica Crònica",
     "Pneumonitis Induïda per Radiació",
     "Pneumonitis Limfocítica Subaguda",
-    "Pneumopaties Intersticials Relacionades amb Metalls (Beril·liosi, Malaltia del Cobalt)",
+    "Pneumopaties Interstitials Relacionades amb Metalls (Beril·liosi, Malaltia del Cobalt)",
     "Pneumopaties per Malalties Autoinflamatòries",
     "Pneumopaties Relacionades amb Pols de Talc",
     "Pneumònia Intersticial Descamativa",
@@ -73,6 +73,11 @@ const Home = () => {
     { id: 3, question: "¿Has perdido peso últimamente?", answer: "" },
     { id: 4, question: "¿Te sientes fatigado?", answer: "" },
     { id: 5, question: "¿Tienes muchos mocos?", answer: "" },
+    { id: 6, question: "¿Tienes la nariz tapada?", answer: "" },
+    { id: 7, question: "¿Te duele la garganta?", answer: "" },
+    { id: 8, question: "¿Tienes fiebre?", answer: "" },
+    { id: 9, question: "¿Tienes dolor en el pecho?", answer: "" },
+    { id: 10, question: "¿Sientes silbidos al respirar?", answer: "" },
   ]);
 
   const [result, setResult] = useState("");
@@ -154,10 +159,10 @@ const Home = () => {
             <div className="selected-mpids">
               <h3>MPIDs seleccionados:</h3>
               {selectedMPIDs.map((mpid) => (
-                <span key={mpid}>
-                  {mpid}{" "}
+                <div key={mpid} className="mpid-item">
+                  <span>{mpid}</span>
                   <button onClick={() => handleDeselectMPID(mpid)}>x</button>
-                </span>
+                </div>
               ))}
               <button onClick={() => setStep("questionnaire")}>Continuar</button>
             </div>
@@ -168,33 +173,35 @@ const Home = () => {
       {step === "questionnaire" && (
         <div className="questionnaire">
           <h2>¿Cómo te encuentras hoy?</h2>
-          {questions.map((question) => (
-            <div key={question.id} className="question-card">
-              <p>{question.question}</p>
-              <div className="options">
-                <label>
-                  <input
-                    type="radio"
-                    name={`question-${question.id}`}
-                    value="yes"
-                    checked={question.answer === "yes"}
-                    onChange={() => handleAnswerChange(question.id, "yes")}
-                  />
-                  Sí
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name={`question-${question.id}`}
-                    value="no"
-                    checked={question.answer === "no"}
-                    onChange={() => handleAnswerChange(question.id, "no")}
-                  />
-                  No
-                </label>
+          <div className="question-grid">
+            {questions.map((question) => (
+              <div key={question.id} className="question-card">
+                <p>{question.question}</p>
+                <div className="options">
+                  <label>
+                    <input
+                      type="radio"
+                      name={`question-${question.id}`}
+                      value="yes"
+                      checked={question.answer === "yes"}
+                      onChange={() => handleAnswerChange(question.id, "yes")}
+                    />
+                    Sí
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name={`question-${question.id}`}
+                      value="no"
+                      checked={question.answer === "no"}
+                      onChange={() => handleAnswerChange(question.id, "no")}
+                    />
+                    No
+                  </label>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
           <button onClick={calculateResult} className="send">Enviar</button>
           {result && <p className="result">{result}</p>}
         </div>
