@@ -60,7 +60,7 @@ app.post('/add-symptoms', async (req, res) => {
         const query = "INSERT INTO mpid_symptoms (dni, mpid, ofeg, tos_persistent, perdua_pes, fatiga, increment_mucositat, congestio_nasal, dolor_gola, febre, dolor_tor, xiulets, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
         // Execute the query for each MPID
-        connection.query(query, [dni, mpidValue, answers[0], answers[1], answers[2], answers[3], answers[4], answers[5], answers[6], answers[7], answers[8], answers[9], date], (err, rows) => {
+        connection.query(query, [dni, mpidValue, answers[0].answer, answers[1].answer, answers[2].answer, answers[3].answer, answers[4].answer, answers[5].answer, answers[6].answer, answers[7].answer, answers[8].answer, answers[9].answer, date], (err, rows) => {
           if (err) {
             console.error('Error inserting data:', err.stack);
             return connection.rollback(() => {
@@ -91,6 +91,32 @@ app.post('/add-symptoms', async (req, res) => {
   }
 });
 
+app.post('/dni-usr', async(req, res) => {
+  const { email } = req.query;
+
+  if(!email) {
+    return res.status(400).json({error: "Email is not sent"});
+  }
+
+  try {
+    const query = "SELECT dni FROM user_login WHERE email = ?";
+    connection.query(query, [email], async (err, rows) => {
+      if(err) {
+        console.error("Error gathering dni");
+        return res.status(401).json({error: 'Failed to get dni'});
+      }
+
+      const usr = rows[0];
+
+      res.status(200).json({
+        dni: usr.dni,
+      });
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({error: 'Internal Server Error'});
+  }
+})
 
 app.post('/get-usr-data', async(req, res) => {
   const { email } = req.body;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import './home.css';
 import axios from 'axios';
+import { UNSAFE_DataRouterStateContext } from 'react-router-dom';
 
 const Home = () => {
   const [profileImage, setProfileImage] = useState('/images/default-profile.jpg');
@@ -97,19 +98,52 @@ const Home = () => {
       answer: q.answer === "yes" ? 1 : 0,
     }));
 
-    const dataToSend = {
-      dni: "user_dni_here", // Replace with actual DNI
-      mpid: selectedMPIDs,
-      answers: answers,
-      date: new Date().toISOString(),
+
+    let userC;
+    let user;
+
+
+    const fetchUserData = async () => {
+            userC = Cookies.get("user"); // Retrieve the user's cookie
+            user = JSON.parse(userC);
     };
 
+    fetchUserData();
+
+
     try {
-      const response = await axios.post('http://localhost:3000/add-symptoms', dataToSend);
-      console.log('Data sent to backend:', response.data);
-    } catch (error) {
-      console.error('Error sending data to backend:', error);
+      console.log(user.email);
+      const payload = (user.email);
+      const response = await fetch("http://localhost:3000/dni-usr", {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch user data.");
+
+      const data = await response.json(payload);
+
+      console.log(data.dni);
+
+      const dataToSend = {
+        dni: data.dni, // Replace with actual DNI
+        mpid: selectedMPIDs,
+        answers: answers,
+        date: new Date().toISOString(),
+      };
+
+      try {
+        const response = await axios.post('http://localhost:3000/add-symptoms', dataToSend);
+        console.log('Data sent to backend:', response.data);
+      } catch (error) {
+        console.error('Error sending data to backend:', error);
+      }
+    } catch(err) {
+      console.error(err);
     }
+
   };
 
   const saveMPIDs = (mpids) => {
@@ -156,7 +190,7 @@ const Home = () => {
             Volver
           </button>
         )}
-        <a href="http://localhost:3000/profile" className="profile-button">
+        <a href="http://localhost:3001/profile" className="profile-button">
           <img src={profileImage} alt="Perfil" />
         </a>
       </div>
@@ -225,7 +259,7 @@ const Home = () => {
               </div>
             ))}
           </div>
-          <button onClick={calculateResult} className="send">Enviar</button>
+          <button onClick={sendAnswersToBackend} className="send">Enviar</button>
           {result && <p className="result">{result}</p>}
         </div>
       )}
