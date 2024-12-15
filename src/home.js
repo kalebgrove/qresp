@@ -101,12 +101,11 @@ const Home = () => {
 
       if (!response.ok) throw new Error("Failed to fetch user data.");
 
-      const data = await response.json(payload);
-
+      const data = await response.json();
       console.log(data.dni);
 
       const dataToSend = {
-        dni: data.dni, // Replace with actual DNI
+        dni: data.dni,
         mpid: selectedMPIDs,
         answers: answers,
         date: new Date().toISOString(),
@@ -118,8 +117,11 @@ const Home = () => {
       } catch (error) {
         console.error('Error sending data to backend:', error);
       }
-    } catch(err) {
+    } catch (err) {
       console.error(err);
+    } finally {
+      calculateResult();
+      setStep("result");
     }
   };
 
