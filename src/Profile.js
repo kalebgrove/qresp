@@ -48,15 +48,6 @@ function Profile() {
   
           const data = await response.json();
 
-          /*function formatDateToISO(date) {
-            let dob = new Date(date); // Ensure the date is a Date object
-          
-            return dob.toISOString().split('T')[0];
-          }*/
-          
-          //const formattedDob = formatDateToISO(data.dob);
-          // console.log(data.age);
-
           setName(`${data.firstname} ${data.lastname}`);
           setAge(data.age);
           setDNI(data.dni);
