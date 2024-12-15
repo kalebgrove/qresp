@@ -81,59 +81,39 @@ const Home = () => {
   };
 
   const sendAnswersToBackend = async () => {
-    const answers = questions.map((q) => (q.answer === "yes" ? 1 : 0));
-  
-    let userC;
-    let user;
-  
-    // Fetch user data (email) from cookies
-    const fetchUserData = async () => {
-      userC = Cookies.get("user"); // Retrieve the user's cookie
-      user = JSON.parse(userC);     // Make sure the user object is parsed correctly
-    };
-  
-    await fetchUserData();  // Ensure user data is fetched before proceeding
-  
+    const answers = questions.map((q) => ({
+      question_id: q.id,
+      answer: q.answer === "yes" ? 1 : 0,
+    }));
+
     try {
-      console.log(user.email);  // Logs the user's email for debugging
-  
-      // Send GET request to retrieve the DNI using the user's email
-      const response = await fetch('http://localhost:3000/dni-usr', {
-        method: 'POST',
+      const user = await fetchUserData();
+      if (!user) {
+        throw new Error("Usuario no disponible. Verifica la cookie 'user'.");
+      }
+
+      const response = await fetch("http://localhost:3000/dni-usr", {
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: user.email }),  // Send email in the request body
-      });      
-  
-      if (!response.ok) {
-        throw new Error("Failed to fetch DNI.");
-      }
-  
-      const data = await response.json();
+      });
 
-      console.log(data.dni);  // Logs the DNI for debugging
-  
-      // Prepare data to send to the backend (MPIDs, answers, etc.)
+      if (!response.ok) throw new Error("Failed to fetch user data.");
+
+      const data = await response.json();
+      console.log(data.dni);
+
       const dataToSend = {
-        dni: data.dni, // Use the DNI fetched from the GET request
+        dni: data.dni,
         mpid: selectedMPIDs,
         answers: answers,
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString(),
       };
-  
-      try {
-        console.log({dataToSend});
-        // Send POST request to save the symptoms in the backend
-        const postResponse = await fetch('http://localhost:3000/add-symptoms', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(dataToSend),
-        })
-        console.log('Data sent to backend:', postResponse.data);
 
+      try {
+        const response = await axios.post('http://localhost:3000/add-symptoms', dataToSend);
+        console.log('Data sent to backend:', response.data);
       } catch (error) {
         console.error('Error sending data to backend:', error);
       }
@@ -166,11 +146,10 @@ const Home = () => {
 
   const handleAnswerChange = (id, answer) => {
     const updatedQuestions = questions.map((q) =>
-      q.id === id ? { ...q, answer: answer === "yes" ? 1 : 0 } : q
+      q.id === id ? { ...q, answer } : q
     );
     setQuestions(updatedQuestions);
   };
-  
 
   const calculateResult = () => {
     const positiveAnswers = questions.filter((q) => q.answer === "yes").length;
@@ -214,13 +193,17 @@ const Home = () => {
           {selectedMPIDs.length > 0 && (
             <div className="selected-mpids">
               <h3>MPIDs seleccionados:</h3>
-              {selectedMPIDs.map((mpid) => (
-                <div key={mpid} className="mpid-item">
-                  <span>{mpid}</span>
-                  <button onClick={() => handleDeselectMPID(mpid)}>x</button>
-                </div>
-              ))}
-              <button onClick={() => setStep("questionnaire")}>Continuar</button>
+              <div className="mpid-list">
+                {selectedMPIDs.map((mpid, index) => (
+                  <span key={index} className="mpid-item" title={mpid}>
+                    {mpid}
+                    <button onClick={() => handleDeselectMPID(mpid)}>x</button>
+                  </span>
+                ))}
+              </div>
+              <button className="continue" onClick={() => setStep("questionnaire")}>
+                Continuar
+              </button>
             </div>
           )}
         </div>

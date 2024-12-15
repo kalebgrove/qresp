@@ -1,0 +1,66 @@
+.resultados-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  
+  .resultados-container h1 {
+    font-size: 28px;
+    color: #333333;
+  }
+  
+  .resultado-diagnostico,
+  .resultado-gravedad {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .resultado-diagnostico h2,
+  .resultado-gravedad h2 {
+    font-size: 20px;
+    color: #4caf50;
+  }
+  
+  .resultado-diagnostico p,
+  .resultado-gravedad p {
+    font-size: 16px;
+    color: #555555;
+  }
+  
+  .resultado-mpids {
+    margin-top: 30px;
+  }
+  
+  .resultado-mpids h3 {
+    font-size: 18px;
+    color: #333333;
+  }
+  
+  .resultado-mpids ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .resultado-mpids ul li {
+    padding: 5px 10px;
+    background: #e0f7fa;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333333;
+  }
+  
+  /* Estilo para mensajes de error */
+  .resultados-container p {
+    font-size: 16px;
+    color: #ff5252;
+  }
+  
