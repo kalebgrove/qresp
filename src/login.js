@@ -176,7 +176,7 @@ function Login() {
               ></div>
               <div
                 className={`circle ${secondStep ? 'active' : ''}`}
-                onClick={() => setStep(true)} // Navigate to second step
+                // Navigate to second step
               ></div>
             </div>
           )}

@@ -11,6 +11,8 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
+const apiKey = process.env.GPT_SECRET_KEY;
+
 // Create a connection to the database
 const connection = mysql.createConnection({
   host: process.env.DB_CONNECTION,       // Replace with your database host
