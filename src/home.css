@@ -26,92 +26,30 @@
     gap: 20px;
   }
 
-  /* MPID Selector */
-  .mpid-selector {
-    text-align: center;
-  }
-
-  .mpid-selector h2 {
-    font-size: 26px;
-    margin-bottom: 20px;
-    color: #4F4F4F; /* Gris oscuro para títulos */
-    font-weight: bold;
-  }
-
-  .dropdown-container {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 0;
-  }
-
-  select {
-    padding: 12px 16px;
-    font-size: 14px;
-    border: 2px solid #E0E0E0; /* Gris claro */
-    border-radius: 12px;
-    background-color: #A5D6A7; /* Verde pastel */
-    color: #4F4F4F; /* Gris oscuro para texto */
-    transition: all 0.3s ease;
-    width: 60%;
-  }
-
-  select:focus {
-    border-color: #66BB6A; /* Verde medio */
-    outline: none;
-  }
-
-  button {
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    background-color: #66BB6A; /* Verde medio */
-    color: #FFFFFF; /* Texto blanco */
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  button:hover {
-    background-color: #81C784; /* Verde claro */
-  }
-
-  /* Selected MPIDs */
-  .selected-mpids {
-    margin-top: 20px;
-    text-align: left;
-    padding: 15px;
-    background-color: #A5D6A7; /* Fondo verde pastel */
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .selected-mpids h3 {
-    font-size: 20px;
-    color: #4F4F4F; /* Gris oscuro */
-    margin-bottom: 10px;
-    font-weight: bold;
-  }
-
   .selected-mpids span {
     display: inline-block;
-    background-color: #66BB6A; /* Verde medio */
-    border-radius: 15px;
-    padding: 10px 15px;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    font-size: 14px;
+    border-radius: 8px; /* Bordes más pequeños */
+    padding: 5px 8px; /* Tamaño compacto */
+    margin-right: 5px; /* Espaciado reducido */
+    margin-bottom: 5px; /* Espaciado reducido */
+    font-size: 12px; /* Fuente más pequeña */
     color: #FFFFFF; /* Texto blanco */
     font-weight: bold;
+    background: linear-gradient(145deg, #66bb6a, #57a65a); /* Fondo con degradado */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
     cursor: pointer;
     transition: all 0.3s ease;
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    max-width: 200px; /* Máximo ancho reducido */
+    overflow: hidden; /* Oculta el texto desbordante */
+    text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es demasiado largo */
+    text-align: center; /* Centra el texto */
   }
 
   .selected-mpids span:hover {
-    background-color: #81C784; /* Verde claro */
+    background-color: #81C784; /* Verde claro al pasar el ratón */
+    transform: translateY(-2px); /* Efecto de elevación */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
   }
 
   /* Questionnaire */
@@ -385,3 +323,145 @@
     transform: scale(1.1);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   }
+
+
+  /* MPID Selector */
+.mpid-selector {
+  text-align: center;
+  padding: 25px;
+  background: linear-gradient(145deg, #ffffff, #f4f4f4);
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.mpid-selector h2 {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #2e2e2e;
+  letter-spacing: 1px;
+}
+
+/* Dropdown Container */
+.dropdown-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+}
+
+select {
+  padding: 14px 18px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background-color: #f4f4f4;
+  color: #333333;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  width: 65%;
+  max-width: 400px;
+}
+
+select:hover {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+select:focus {
+  box-shadow: 0 3px 12px rgba(102, 187, 106, 0.5);
+  outline: none;
+}
+
+/* Buttons */
+button {
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(145deg, #66bb6a, #57a65a);
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(102, 187, 106, 0.2);
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(102, 187, 106, 0.3);
+}
+
+button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(102, 187, 106, 0.2);
+}
+
+/* Selected MPIDs */
+.selected-mpids {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in-out;
+  text-align: center;
+}
+
+.selected-mpids h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 15px;
+}
+
+/* MPID Items */
+.mpid-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #66bb6a, #57a65a);
+  color: white;
+  border-radius: 15px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  flex: 0 1 auto; /* Los elementos no se expanden más allá de su contenido */
+  max-width: 100%; /* Evita que se desborde */
+}
+
+.mpid-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mpid-item button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.mpid-item button:hover {
+  color: #ffcccc;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
