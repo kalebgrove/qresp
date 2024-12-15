@@ -59,7 +59,8 @@ const Home = () => {
     "Síndrome de Goodpasture (Hemorràgia Alveolar Difusa)",
     "Síndrome de Hermansky-Pudlak (Associada a la Fibrosi Pulmonar i Albinisme)",
     "Síndrome de Löffler (Infiltrats Eosinofílics Transitòris)"
-  ]);
+]);
+
 
   const [selectedMPIDs, setSelectedMPIDs] = useState(() => {
     const savedMPIDs = Cookies.get("mpids");
@@ -93,16 +94,16 @@ const Home = () => {
   const sendAnswersToBackend = async () => {
     const answers = questions.map((q) => ({
       question_id: q.id,
-      answer: q.answer,
+      answer: q.answer === "yes" ? 1 : 0,
     }));
-  
+
     const dataToSend = {
-      dni: "user_dni_here",  // Replace with actual DNI (you can fetch from the session or state)
-      mpid: selectedMPIDs,   // The selected MPIDs from state
-      answers: answers,      // The answers with 1 for 'yes' and 0 for 'no'
-      date: new Date().toISOString(), // Current date
+      dni: "user_dni_here", // Replace with actual DNI
+      mpid: selectedMPIDs,
+      answers: answers,
+      date: new Date().toISOString(),
     };
-  
+
     try {
       const response = await axios.post('http://localhost:3000/add-symptoms', dataToSend);
       console.log('Data sent to backend:', response.data);
@@ -132,7 +133,7 @@ const Home = () => {
 
   const handleAnswerChange = (id, answer) => {
     const updatedQuestions = questions.map((q) =>
-      q.id === id ? { ...q, answer: answer === "yes" ? 1 : 0 } : q
+      q.id === id ? { ...q, answer } : q
     );
     setQuestions(updatedQuestions);
   };
