@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import './home.css';
 
 const Home = () => {
-  const [profileImage, setProfileImage] = useState('/images/default-profile.jpg'); // Estado para la imagen de perfil
+  const [profileImage, setProfileImage] = useState('/images/default-profile.jpg');
   const [availableMPIDs] = useState([
     "Alveolitis Al·lèrgica Extrínseca",
     "Bronquiolitis Obliterant",
@@ -68,17 +68,16 @@ const Home = () => {
   const [currentMPID, setCurrentMPID] = useState("");
   const [step, setStep] = useState("select");
   const [questions, setQuestions] = useState([
-    { id: 1, question: "T'ofegues sovint?", answer: "" },
-    { id: 2, question: "Tens tos persistent?", answer: "" },
-    { id: 3, question: "Has perdut pes últimament?", answer: "" },
-    { id: 4, question: "Et sents fatigat?", answer: "" },
-    { id: 5, question: "Tens molts mocs?", answer: "" },
+    { id: 1, question: "¿Te ahogas a menudo?", answer: "" },
+    { id: 2, question: "¿Tienes tos persistente?", answer: "" },
+    { id: 3, question: "¿Has perdido peso últimamente?", answer: "" },
+    { id: 4, question: "¿Te sientes fatigado?", answer: "" },
+    { id: 5, question: "¿Tienes muchos mocos?", answer: "" },
   ]);
 
   const [result, setResult] = useState("");
 
   useEffect(() => {
-    // Recupera la imagen de perfil desde localStorage
     const savedProfileImage = localStorage.getItem("profileImage");
     if (savedProfileImage) {
       setProfileImage(savedProfileImage);
@@ -114,26 +113,29 @@ const Home = () => {
   const calculateResult = () => {
     const positiveAnswers = questions.filter((q) => q.answer === "yes").length;
 
-    if (positiveAnswers >= 2) {
-      setResult(`Consulta mèdica urgent recomanada amb els MPIDs seleccionats (${selectedMPIDs.join(", ")})`);
-    } else {
-      setResult(`Els MPIDs seleccionats (${selectedMPIDs.join(", ")}) no indiquen urgència immediata.`);
-    }
+    setResult(
+      positiveAnswers >= 2
+        ? `Consulta médica urgente recomendada con los MPIDs seleccionados (${selectedMPIDs.join(", ")})`
+        : `Los MPIDs seleccionados (${selectedMPIDs.join(", ")}) no indican urgencia inmediata.`
+    );
   };
 
   return (
     <div className="home-container">
-      <div className="profile-button-container">
-        <a href="http://localhost:3000/profile">
-          <div className="profile-button">
-            <img src={profileImage} alt="Perfil" />
-          </div>
+      <div className="header">
+        {step === "questionnaire" && (
+          <button className="back" onClick={() => setStep("select")}>
+            Volver
+          </button>
+        )}
+        <a href="http://localhost:3000/profile" className="profile-button">
+          <img src={profileImage} alt="Perfil" />
         </a>
       </div>
 
       {step === "select" && (
         <div className="mpid-selector">
-          <h2>Seleccioneu les vostres MPIDs</h2>
+          <h2>Seleccione sus MPIDs</h2>
           <div className="dropdown-container">
             <select
               value={currentMPID}
@@ -146,11 +148,11 @@ const Home = () => {
                 </option>
               ))}
             </select>
-            <button onClick={handleSelectMPID}>Afegir</button>
+            <button onClick={handleSelectMPID}>Añadir</button>
           </div>
           {selectedMPIDs.length > 0 && (
             <div className="selected-mpids">
-              <h3>MPIDs seleccionats:</h3>
+              <h3>MPIDs seleccionados:</h3>
               {selectedMPIDs.map((mpid) => (
                 <span key={mpid}>
                   {mpid}{" "}
@@ -165,14 +167,11 @@ const Home = () => {
 
       {step === "questionnaire" && (
         <div className="questionnaire">
-          <div className="header">
-            <button onClick={() => setStep("select")} className="back">Tornar</button>
-            <h2>Com et trobes avui?</h2>
-          </div>
-          <div>
-            {questions.map((question) => (
-              <div key={question.id} className="question-options">
-                <p>{question.question}</p>
+          <h2>¿Cómo te encuentras hoy?</h2>
+          {questions.map((question) => (
+            <div key={question.id} className="question-card">
+              <p>{question.question}</p>
+              <div className="options">
                 <label>
                   <input
                     type="radio"
@@ -194,10 +193,10 @@ const Home = () => {
                   No
                 </label>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
           <button onClick={calculateResult} className="send">Enviar</button>
-          {result && <p>{result}</p>}
+          {result && <p className="result">{result}</p>}
         </div>
       )}
     </div>
