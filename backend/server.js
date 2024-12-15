@@ -38,8 +38,10 @@ app.use(cors({
 }));
 
 app.post('/add-symptoms', async (req, res) => {
-  // Destructure the request body
   const { dni, mpids, answers, date } = req.body;
+
+  console.log("Answers for insertion:", answers[0]);  // Log the entire request body to debug
+
 
   // Check for missing information
   if (!dni || !mpids || !answers || !date) {
@@ -47,28 +49,25 @@ app.post('/add-symptoms', async (req, res) => {
   }
 
   try {
-    // Start a transaction
     connection.beginTransaction((err) => {
       if (err) {
         console.error('Error starting transaction:', err.stack);
         return res.status(500).json({ error: 'Failed to start transaction' });
       }
-    
+
+
       // Iterate over the selected MPIDs and insert data for each MPID
       mpids.forEach((mpidValue) => {
-        // Prepare the SQL query for each MPID
         const query = "INSERT INTO mpid_symptoms (dni, mpid, ofeg, tos_persistent, perdua_pes, fatiga, increment_mucositat, congestio_nasal, dolor_gola, febre, dolor_tor, xiulets, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    
-        // Execute the query for each MPID
-        connection.query(query, [dni, mpidValue, answers[0].answer, answers[1].answer, answers[2].answer, answers[3].answer, answers[4].answer, answers[5].answer, answers[6].answer, answers[7].answer, answers[8].answer, answers[9].answer, date], (err, rows) => {
+
+        connection.query(query, [dni, mpidValue, answers[0], answers[1], answers[2], answers[3], answers[4], answers[5], answers[6], answers[7], answers[8], answers[9], date], (err) => {
           if (err) {
             console.error('Error inserting data:', err.stack);
             return connection.rollback(() => {
               res.status(500).json({ error: 'Failed to insert data' });
             });
           }
-    
-          // If this is the last MPID, commit the transaction
+
           if (mpids.indexOf(mpidValue) === mpids.length - 1) {
             connection.commit((err) => {
               if (err) {
@@ -78,45 +77,44 @@ app.post('/add-symptoms', async (req, res) => {
                 });
               }
     
-              // Send success response
               res.status(200).json({ message: 'User symptoms registered successfully' });
             });
           }
         });
       });
-    });    
+    });
   } catch (err) {
     console.error('Error during transaction:', err);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-app.post('/dni-usr', async(req, res) => {
-  const { email } = req.query;
+app.post('/dni-usr', async (req, res) => {
+  const { email } = req.body;  // Read email from the request body
 
-  if(!email) {
-    return res.status(400).json({error: "Email is not sent"});
+  if (!email) {
+    return res.status(400).json({ error: "Email is not sent" });
   }
 
   try {
     const query = "SELECT dni FROM user_login WHERE email = ?";
     connection.query(query, [email], async (err, rows) => {
-      if(err) {
+      if (err) {
         console.error("Error gathering dni");
-        return res.status(401).json({error: 'Failed to get dni'});
+        return res.status(401).json({ error: 'Failed to get dni' });
       }
 
       const usr = rows[0];
-
       res.status(200).json({
         dni: usr.dni,
       });
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({error: 'Internal Server Error'});
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-})
+});
+
 
 app.post('/get-usr-data', async(req, res) => {
   const { email } = req.body;

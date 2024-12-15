@@ -93,57 +93,65 @@ const Home = () => {
   }, []);
 
   const sendAnswersToBackend = async () => {
-    const answers = questions.map((q) => ({
-      question_id: q.id,
-      answer: q.answer === "yes" ? 1 : 0,
-    }));
-
-
+    const answers = questions.map((q) => (q.answer === "yes" ? 1 : 0));
+  
     let userC;
     let user;
-
-
+  
+    // Fetch user data (email) from cookies
     const fetchUserData = async () => {
-            userC = Cookies.get("user"); // Retrieve the user's cookie
-            user = JSON.parse(userC);
+      userC = Cookies.get("user"); // Retrieve the user's cookie
+      user = JSON.parse(userC);     // Make sure the user object is parsed correctly
     };
-
-    fetchUserData();
-
-
+  
+    await fetchUserData();  // Ensure user data is fetched before proceeding
+  
     try {
-      console.log(user.email);
-      const payload = (user.email);
-      const response = await fetch("http://localhost:3000/dni-usr", {
-        method: 'GET',
+      console.log(user.email);  // Logs the user's email for debugging
+  
+      // Send GET request to retrieve the DNI using the user's email
+      const response = await fetch('http://localhost:3000/dni-usr', {
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
-      });
+        body: JSON.stringify({ email: user.email }),  // Send email in the request body
+      });      
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch DNI.");
+      }
+  
+      const data = await response.json();
 
-      if (!response.ok) throw new Error("Failed to fetch user data.");
-
-      const data = await response.json(payload);
-
-      console.log(data.dni);
-
+      console.log(data.dni);  // Logs the DNI for debugging
+  
+      // Prepare data to send to the backend (MPIDs, answers, etc.)
       const dataToSend = {
-        dni: data.dni, // Replace with actual DNI
+        dni: data.dni, // Use the DNI fetched from the GET request
         mpid: selectedMPIDs,
         answers: answers,
-        date: new Date().toISOString(),
+        date: new Date().toISOString().split('T')[0],
       };
-
+  
       try {
-        const response = await axios.post('http://localhost:3000/add-symptoms', dataToSend);
-        console.log('Data sent to backend:', response.data);
+        console.log({dataToSend});
+        // Send POST request to save the symptoms in the backend
+        const postResponse = await fetch('http://localhost:3000/add-symptoms', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSend),
+        })
+        console.log('Data sent to backend:', postResponse.data);
+
       } catch (error) {
         console.error('Error sending data to backend:', error);
       }
-    } catch(err) {
-      console.error(err);
+    } catch (err) {
+      console.error('Error during the process:', err);
     }
-
   };
 
   const saveMPIDs = (mpids) => {
@@ -167,10 +175,11 @@ const Home = () => {
 
   const handleAnswerChange = (id, answer) => {
     const updatedQuestions = questions.map((q) =>
-      q.id === id ? { ...q, answer } : q
+      q.id === id ? { ...q, answer: answer === "yes" ? 1 : 0 } : q
     );
     setQuestions(updatedQuestions);
   };
+  
 
   const calculateResult = () => {
     const positiveAnswers = questions.filter((q) => q.answer === "yes").length;
