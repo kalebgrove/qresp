@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './Profile.css';
 import Cookies from 'js-cookie';
-import axios from 'axios'; // Import Axios
+import { QRCodeCanvas } from 'qrcode.react'; // Usa QRCodeCanvas
 
 function Profile() {
   const [profileImage, setProfileImage] = useState('/images/default-profile.jpg');
   const [activeTab, setActiveTab] = useState('datos');
+  const [showQRPopup, setShowQRPopup] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [userDetails, setUserDetails] = useState(null); // New state to hold user data from backend
+  const [userDetails, setUserDetails] = useState(null);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [dni, setDNI] = useState('');
@@ -19,61 +20,42 @@ function Profile() {
   const [email, setEmail] = useState('');
   const [number, setNumber] = useState('');
 
-   useEffect(() => {
-      const fetchUserData = async () => {
-        const userC = Cookies.get("user"); // Retrieve the user's cookie
-        if (!userC) {
-          alert("No user session found. Please log in.");
-          return;
-        }
-        
-  
-        try {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userC = Cookies.get("user");
+      if (!userC) {
+        alert("No user session found. Please log in.");
+        return;
+      }
 
-          const user = JSON.parse(userC);
+      try {
+        const user = JSON.parse(userC);
+        const payload = { email: user.email };
 
-          console.log(user.email);
+        const response = await fetch("http://localhost:3000/get-usr-data", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
 
-          const payload = { email: user.email };
+        if (!response.ok) throw new Error("Failed to fetch user data.");
 
-          const response = await fetch("http://localhost:3000/get-usr-data", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-  
-          if (!response.ok) throw new Error("Failed to fetch user data.");
-  
-          const data = await response.json();
+        const data = await response.json();
+        setName(`${data.firstname} ${data.lastname}`);
+        setAge(data.age);
+        setDNI(data.dni);
+        setSex(data.sex);
+        setEmail(data.email);
+        setNumber(data.number);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
 
-          setName(`${data.firstname} ${data.lastname}`);
-          setAge(data.age);
-          setDNI(data.dni);
-          setSex(data.sex);
-          setEmail(data.email);
-          setNumber(data.number);
-
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      };
-  
-      fetchUserData();
-    }, []);
-
-  // Simulación de la contraseña almacenada
-  const storedPassword = 'password123';
-
-  const accountDetails = {
-    "Nom i Cognom": name,
-    DNI: dni,
-    "Data de Naixement": age,
-    Sexe: sex,
-    "Correu Electrònic": email,
-    "Telèfon": number,
-  };
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const savedImage = localStorage.getItem('profileImage');
@@ -99,26 +81,8 @@ function Profile() {
     localStorage.setItem('profileImage', defaultImage);
   };
 
-  const handleSavePassword = () => {
-    setError('');
-    setSuccess('');
-
-    if (currentPassword !== storedPassword) {
-      setError('La contraseña actual no es correcta.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden.');
-      return;
-    }
-
-    // Simula guardar la nueva contraseña
-    alert('Contraseña cambiada con éxito.');
-    setSuccess('Contraseña cambiada con éxito.');
-    setCurrentPassword('');
-    setPassword('');
-    setConfirmPassword('');
+  const toggleQRPopup = () => {
+    setShowQRPopup(!showQRPopup);
   };
 
   return (
@@ -153,21 +117,33 @@ function Profile() {
         {activeTab === 'datos' && (
           <div className="account-info">
             <h3>Información de la cuenta</h3>
-            {userDetails ? (
-              Object.entries(userDetails).map(([label, value]) => (
-                <div className="info-item" key={label}>
-                  <span className="info-label">{label}:</span>
-                  <span className="info-value">{value}</span>
-                </div>
-              ))
-            ) : (
-              Object.entries(accountDetails).map(([label, value]) => (
-                <div className="info-item" key={label}>
-                  <span className="info-label">{label}:</span>
-                  <span className="info-value">{value}</span>
-                </div>
-              ))
-            )}
+            {/* Datos del usuario */}
+            <>
+              <div className="info-item">
+                <span className="info-label">Nombre y Apellido:</span>
+                <span className="info-value">{name}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">DNI:</span>
+                <span className="info-value">{dni}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Edad:</span>
+                <span className="info-value">{age}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Sexo:</span>
+                <span className="info-value">{sex}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Correo Electrónico:</span>
+                <span className="info-value">{email}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Teléfono:</span>
+                <span className="info-value">{number}</span>
+              </div>
+            </>
           </div>
         )}
 
@@ -203,12 +179,30 @@ function Profile() {
             </div>
             {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
             {success && <p style={{ color: 'green', textAlign: 'center' }}>{success}</p>}
-            <button type="button" onClick={handleSavePassword} className="save-button">
+            <button type="button" className="save-button">
               Guardar Contraseña
             </button>
           </div>
         )}
       </div>
+
+      {/* Botón flotante */}
+      <button className="qr-button" onClick={toggleQRPopup}>
+        QR
+      </button>
+
+      {/* Popup con el QR */}
+      {showQRPopup && (
+        <div className="qr-popup">
+          <div className="qr-popup-content">
+            <button className="close-popup" onClick={toggleQRPopup}>
+              ×
+            </button>
+            <QRCodeCanvas value="http://localhost:3000/resultados" size={200} />
+            <p>Escanee el código QR para ver los resultados.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
