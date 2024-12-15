@@ -92,16 +92,18 @@ const Home = () => {
         throw new Error("Usuario no disponible. Verifica la cookie 'user'.");
       }
 
-      const response = await fetch("http://localhost:3000/dni-usr", {
-        method: 'GET',
+      const response = await fetch('http://localhost:3000/dni-usr', {
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ email: user.email }),  // Send email in the request body
       });
 
       if (!response.ok) throw new Error("Failed to fetch user data.");
 
       const data = await response.json();
+
       console.log(data.dni);
 
       const dataToSend = {
