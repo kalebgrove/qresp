@@ -81,42 +81,42 @@ const Home = () => {
   };
 
   const sendAnswersToBackend = async () => {
-    const answers = questions.map((q) => (q.answer === "yes" ? 1 : 0));
-  
+    const answers = questions.map((q) => ({
+      question_id: q.id,
+      answer: q.answer === "yes" ? 1 : 0,
+    }));
+
+
     let userC;
     let user;
-  
-    // Fetch user data (email) from cookies
+
+
     const fetchUserData = async () => {
-      userC = Cookies.get("user"); // Retrieve the user's cookie
-      user = JSON.parse(userC);     // Make sure the user object is parsed correctly
+            userC = Cookies.get("user"); // Retrieve the user's cookie
+            user = JSON.parse(userC);
     };
-  
-    await fetchUserData();  // Ensure user data is fetched before proceeding
-  
+
+    fetchUserData();
+
+
     try {
-      console.log(user.email);  // Logs the user's email for debugging
-  
-      // Send GET request to retrieve the DNI using the user's email
-      const response = await fetch('http://localhost:3000/dni-usr', {
-        method: 'POST',
+      console.log(user.email);
+      const payload = (user.email);
+      const response = await fetch("http://localhost:3000/dni-usr", {
+        method: 'GET',
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: user.email }),  // Send email in the request body
-      });      
-  
-      if (!response.ok) {
-        throw new Error("Failed to fetch DNI.");
-      }
-  
-      const data = await response.json();
+      });
 
-      console.log(data.dni);  // Logs the DNI for debugging
-  
-      // Prepare data to send to the backend (MPIDs, answers, etc.)
+      if (!response.ok) throw new Error("Failed to fetch user data.");
+
+      const data = await response.json(payload);
+
+      console.log(data.dni);
+
       const dataToSend = {
-        dni: data.dni, // Use the DNI fetched from the GET request
+        dni: data.dni, // Replace with actual DNI
         mpid: selectedMPIDs,
         answers: answers,
         date: new Date().toISOString().split('T')[0],
@@ -137,11 +137,8 @@ const Home = () => {
       } catch (error) {
         console.error('Error sending data to backend:', error);
       }
-    } catch (err) {
+    } catch(err) {
       console.error(err);
-    } finally {
-      calculateResult();
-      setStep("result");
     }
   };
 
