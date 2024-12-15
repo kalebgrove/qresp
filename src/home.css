@@ -2,15 +2,15 @@
   body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
-    background-color: #EAF7EF; /* Fondo verde muy claro */
-    color: #4F4F4F; /* Gris oscuro para texto principal */
+    background-color: #EAF7EF;
+    color: #4F4F4F;
     line-height: 1.6;
-    padding: 0; /* Elimina padding general */
-    height: 100vh; /* Asegura que ocupe la pantalla completa */
-    overflow: hidden; /* Desactiva scroll en todo el body */
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 0;
+    overflow: hidden;
   }
 
   /* Home Container */
@@ -18,7 +18,7 @@
     max-width: 900px;
     margin: 40px;
     padding: 25px;
-    background-color: #FFFFFF; /* Fondo blanco */
+    background-color: #FFFFFF;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -204,17 +204,117 @@
     transform: scale(1.1);
   }
 
-  /* Result Section */
-  .result {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #A5D6A7; /* Fondo verde pastel */
-    border: 1px solid #E0E0E0; /* Gris claro */
-    border-radius: 10px;
-    text-align: center;
-    font-size: 16px;
-    color: #4F4F4F; /* Gris oscuro */
+/* Result Section */
+.result-section {
+  .result-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaciado reducido entre bloques */
+    margin: 10px auto; /* Margen superior e inferior reducido */
+    padding: 15px; /* Relleno interno reducido */
+    max-width: 850px; /* Ancho máximo ligeramente ajustado */
+    background-color: #FFFFFF; /* Fondo blanco */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
+    overflow: hidden; /* Asegura que el contenido no sobresalga */
   }
+}
+
+/* Group Header */
+.result-section h3 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333; /* Gris oscuro */
+  margin-bottom: 15px;
+}
+
+/* Answer Groups */
+.answer-group {
+  gap: 10px; /* Espaciado más ajustado entre bloques */
+}
+
+.answer-group h4 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4CAF50; /* Verde para Sí */
+  text-align: left;
+}
+
+.answer-group.no h4 {
+  color: #F44336; /* Rojo para No */
+}
+
+/* Inline Answer Items */
+.answer-items-inline {
+  display: flex;
+  flex-wrap: wrap; /* Permite que las preguntas ocupen varias filas si es necesario */
+  gap: 10px; /* Espaciado entre preguntas */
+  margin-top: 5px; /* Espaciado reducido respecto al título */
+
+} 
+
+/* Answer Item */
+.answer-item {
+  display: inline-flex; /* Muestra los elementos en línea */
+  justify-content: center;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid #E0E0E0; /* Línea gris clara */
+  border-radius: 8px;
+  font-size: 13px;
+  color: #555555; /* Gris oscuro */
+  background-color: #F9F9F9; /* Fondo claro */
+  flex: 0 0 auto; /* No se expanden automáticamente */
+  max-width: calc(33% - 8px); /* Máximo 3 elementos por fila */
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+/* MPID Section */
+.mpid-group {
+
+  margin-top: 5px; /* Espaciado reducido respecto a las respuestas */
+
+}
+
+.mpid-group h4 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333; /* Gris oscuro */
+  text-align: left;
+}
+
+.mpid-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px; /* Espaciado entre etiquetas */
+}
+
+.mpid-item {
+  background-color: #A5D6A7; /* Verde pastel */
+  color: #333333;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+/* Final Result */
+.final-result {
+  text-align: center;
+  font-size: 16px; /* Tamaño de fuente conservado */
+  color: #555555; /* Color gris oscuro */
+  padding: 10px 15px; /* Menos espacio interno */
+  margin-top: 15px; /* Menor margen superior */
+  background-color: #FFF3CD; /* Fondo amarillo suave */
+  border: 1px solid #FFECB5; /* Borde amarillo claro */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+
+
 
   /* Header */
   .header {

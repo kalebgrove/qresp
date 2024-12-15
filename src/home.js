@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import './home.css';
 import axios from 'axios';
-import { UNSAFE_DataRouterStateContext } from 'react-router-dom';
 
 const Home = () => {
   const [profileImage, setProfileImage] = useState('/images/default-profile.jpg');
@@ -32,36 +31,16 @@ const Home = () => {
     "Malaltia Pulmonar Mixta (Restrictiva i Obstructiva)",
     "Malaltia Pulmonar Relacionada amb Beril·liosi Crònica",
     "Malaltia Pulmonar Relacionada amb la Síndrome de Sjögren",
-    "Malaltia Pulmonar Secundària a Pneumònia Organitzada",
     "Pneumoconiosi (Silicosi, Asbestosi, Pneumoconiosi del Carbó)",
     "Pneumonitis Associada a Lupus Eritematós Sistèmic",
     "Pneumonitis d’Hipersensibilitat",
     "Pneumonitis Eosinofílica Crònica",
     "Pneumonitis Induïda per Radiació",
     "Pneumonitis Limfocítica Subaguda",
-    "Pneumopaties Interstitials Relacionades amb Metalls (Beril·liosi, Malaltia del Cobalt)",
-    "Pneumopaties per Malalties Autoinflamatòries",
-    "Pneumopaties Relacionades amb Pols de Talc",
-    "Pneumònia Intersticial Descamativa",
-    "Pneumònia Intersticial Limfocítica",
-    "Pneumònia Intersticial no Específica (PINE)",
     "Pneumònia Organitzativa Criptogènica (COP)",
-    "Proteïnosi Alveolar Pulmonar",
-    "Pulmó de Carbó (Malaltia Relacionada amb la Mineria)",
-    "Pulmó de Granjer (Alveolitis per Exposició a Pols de Fenc)",
-    "Pulmó de Tòxic (Relacionat amb Químics Inhalats)",
     "Sarcoïdosi Pulmonar",
-    "Síndrome d’Hemorràgia Pulmonar Idiopàtica",
-    "Síndrome de Blau (Sarcoïdosi Familiar)",
-    "Síndrome de Birt-Hogg-Dubé (Associada a Quists Pulmonars i Càncer Renal)",
-    "Síndrome de Caplan (Associada a la Pneumoconiosi i l’Artritis Reumatoide)",
-    "Síndrome de Churg-Strauss (Granulomatosi Eosinofílica Amb Poliangiitis)",
-    "Síndrome de Felty amb Afectació Pulmonar",
-    "Síndrome de Goodpasture (Hemorràgia Alveolar Difusa)",
-    "Síndrome de Hermansky-Pudlak (Associada a la Fibrosi Pulmonar i Albinisme)",
-    "Síndrome de Löffler (Infiltrats Eosinofílics Transitòris)"
-]);
-
+    "Síndrome de Blau (Sarcoïdosi Familiar)"
+  ]);
 
   const [selectedMPIDs, setSelectedMPIDs] = useState(() => {
     const savedMPIDs = Cookies.get("mpids");
@@ -71,16 +50,16 @@ const Home = () => {
   const [currentMPID, setCurrentMPID] = useState("");
   const [step, setStep] = useState("select");
   const [questions, setQuestions] = useState([
-    { id: 1, question: "T'afogues sovint?", answer: "" },
-    { id: 2, question: "Tens tos persistent?", answer: "" },
-    { id: 3, question: "Has perdut pes últimament?", answer: "" },
-    { id: 4, question: "Et sents fatigat?", answer: "" },
-    { id: 5, question: "Tens molts de mocs?", answer: "" },
-    { id: 6, question: "Tens el nas tapat?", answer: "" },
-    { id: 7, question: "Et fa mal la gola?", answer: "" },
-    { id: 8, question: "Tens febre?", answer: "" },
-    { id: 9, question: "Tens dolor toràcic?", answer: "" },
-    { id: 10, question: "Sents xiulets quan respires?", answer: "" },
+    { id: 1, question: "¿Te ahogas a menudo?", answer: "" },
+    { id: 2, question: "¿Tienes tos persistente?", answer: "" },
+    { id: 3, question: "¿Has perdido peso últimamente?", answer: "" },
+    { id: 4, question: "¿Te sientes fatigado?", answer: "" },
+    { id: 5, question: "¿Tienes muchos mocos?", answer: "" },
+    { id: 6, question: "¿Tienes la nariz tapada?", answer: "" },
+    { id: 7, question: "¿Te duele la garganta?", answer: "" },
+    { id: 8, question: "¿Tienes fiebre?", answer: "" },
+    { id: 9, question: "¿Tienes dolor en el pecho?", answer: "" },
+    { id: 10, question: "¿Sientes silbidos al respirar?", answer: "" },
   ]);
 
   const [result, setResult] = useState("");
@@ -91,6 +70,15 @@ const Home = () => {
       setProfileImage(savedProfileImage);
     }
   }, []);
+
+  const fetchUserData = async () => {
+    const userCookie = Cookies.get("user");
+    if (!userCookie) {
+      console.error("No se encontró la cookie 'user'.");
+      return null;
+    }
+    return JSON.parse(userCookie);
+  };
 
   const sendAnswersToBackend = async () => {
     const answers = questions.map((q) => (q.answer === "yes" ? 1 : 0));
@@ -150,7 +138,10 @@ const Home = () => {
         console.error('Error sending data to backend:', error);
       }
     } catch (err) {
-      console.error('Error during the process:', err);
+      console.error(err);
+    } finally {
+      calculateResult();
+      setStep("result");
     }
   };
 
@@ -183,7 +174,6 @@ const Home = () => {
 
   const calculateResult = () => {
     const positiveAnswers = questions.filter((q) => q.answer === "yes").length;
-
     setResult(
       positiveAnswers >= 2
         ? `Consulta médica urgente recomendada con los MPIDs seleccionados (${selectedMPIDs.join(", ")})`
@@ -194,7 +184,7 @@ const Home = () => {
   return (
     <div className="home-container">
       <div className="header">
-        {step === "questionnaire" && (
+        {step !== "select" && (
           <button className="back" onClick={() => setStep("select")}>
             Volver
           </button>
@@ -240,27 +230,27 @@ const Home = () => {
         <div className="questionnaire">
           <h2>¿Cómo te encuentras hoy?</h2>
           <div className="question-grid">
-            {questions.map((question) => (
-              <div key={question.id} className="question-card">
-                <p>{question.question}</p>
+            {questions.map((q) => (
+              <div key={q.id} className="question-card">
+                <p>{q.question}</p>
                 <div className="options">
                   <label>
                     <input
                       type="radio"
-                      name={`question-${question.id}`}
+                      name={`q-${q.id}`}
                       value="yes"
-                      checked={question.answer === "yes"}
-                      onChange={() => handleAnswerChange(question.id, "yes")}
+                      checked={q.answer === "yes"}
+                      onChange={() => handleAnswerChange(q.id, "yes")}
                     />
                     Sí
                   </label>
                   <label>
                     <input
                       type="radio"
-                      name={`question-${question.id}`}
+                      name={`q-${q.id}`}
                       value="no"
-                      checked={question.answer === "no"}
-                      onChange={() => handleAnswerChange(question.id, "no")}
+                      checked={q.answer === "no"}
+                      onChange={() => handleAnswerChange(q.id, "no")}
                     />
                     No
                   </label>
@@ -269,7 +259,47 @@ const Home = () => {
             ))}
           </div>
           <button onClick={sendAnswersToBackend} className="send">Enviar</button>
-          {result && <p className="result">{result}</p>}
+        </div>
+      )}
+
+      {step === "result" && (
+        <div className="result-section">
+          <div className="answer-group">
+            <h4>Respuestas Sí</h4>
+            <div className="answer-items-inline">
+              {questions
+                .filter((q) => q.answer === "yes")
+                .map((q) => (
+                  <div key={q.id} className="answer-item">
+                    {q.question}
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          <div className="answer-group">
+            <h4>Respuestas No</h4>
+            <div className="answer-items-inline">
+              {questions
+                .filter((q) => q.answer === "no")
+                .map((q) => (
+                  <div key={q.id} className="answer-item">
+                    {q.question}
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          <div className="mpid-group">
+            <h4>MPIDs seleccionados:</h4>
+            <div className="mpid-list">
+              {selectedMPIDs.map((mpid, index) => (
+                <div key={index} className="mpid-item">{mpid}</div>
+              ))}
+            </div>
+          </div>
+
+          <div className="final-result">{result}</div>
         </div>
       )}
     </div>
