@@ -38,7 +38,7 @@ const Home = () => {
     "Pneumonitis Eosinofílica Crònica",
     "Pneumonitis Induïda per Radiació",
     "Pneumonitis Limfocítica Subaguda",
-    "Pneumopaties Intersticials Relacionades amb Metalls (Beril·liosi, Malaltia del Cobalt)",
+    "Pneumopaties Interstitials Relacionades amb Metalls (Beril·liosi, Malaltia del Cobalt)",
     "Pneumopaties per Malalties Autoinflamatòries",
     "Pneumopaties Relacionades amb Pols de Talc",
     "Pneumònia Intersticial Descamativa",
@@ -59,7 +59,8 @@ const Home = () => {
     "Síndrome de Goodpasture (Hemorràgia Alveolar Difusa)",
     "Síndrome de Hermansky-Pudlak (Associada a la Fibrosi Pulmonar i Albinisme)",
     "Síndrome de Löffler (Infiltrats Eosinofílics Transitòris)"
-  ]);
+]);
+
 
   const [selectedMPIDs, setSelectedMPIDs] = useState(() => {
     const savedMPIDs = Cookies.get("mpids");
@@ -93,16 +94,16 @@ const Home = () => {
   const sendAnswersToBackend = async () => {
     const answers = questions.map((q) => ({
       question_id: q.id,
-      answer: q.answer,
+      answer: q.answer === "yes" ? 1 : 0,
     }));
-  
+
     const dataToSend = {
-      dni: "user_dni_here",  // Replace with actual DNI (you can fetch from the session or state)
-      mpid: selectedMPIDs,   // The selected MPIDs from state
-      answers: answers,      // The answers with 1 for 'yes' and 0 for 'no'
-      date: new Date().toISOString(), // Current date
+      dni: "user_dni_here", // Replace with actual DNI
+      mpid: selectedMPIDs,
+      answers: answers,
+      date: new Date().toISOString(),
     };
-  
+
     try {
       const response = await axios.post('http://localhost:3000/add-symptoms', dataToSend);
       console.log('Data sent to backend:', response.data);
@@ -132,7 +133,7 @@ const Home = () => {
 
   const handleAnswerChange = (id, answer) => {
     const updatedQuestions = questions.map((q) =>
-      q.id === id ? { ...q, answer: answer === "yes" ? 1 : 0 } : q
+      q.id === id ? { ...q, answer } : q
     );
     setQuestions(updatedQuestions);
   };
@@ -181,10 +182,10 @@ const Home = () => {
             <div className="selected-mpids">
               <h3>MPIDs seleccionados:</h3>
               {selectedMPIDs.map((mpid) => (
-                <span key={mpid}>
-                  {mpid}{" "}
+                <div key={mpid} className="mpid-item">
+                  <span>{mpid}</span>
                   <button onClick={() => handleDeselectMPID(mpid)}>x</button>
-                </span>
+                </div>
               ))}
               <button onClick={() => setStep("questionnaire")}>Continuar</button>
             </div>
@@ -195,33 +196,35 @@ const Home = () => {
       {step === "questionnaire" && (
         <div className="questionnaire">
           <h2>¿Cómo te encuentras hoy?</h2>
-          {questions.map((question) => (
-            <div key={question.id} className="question-card">
-              <p>{question.question}</p>
-              <div className="options">
-                <label>
-                  <input
-                    type="radio"
-                    name={`question-${question.id}`}
-                    value="yes"
-                    checked={question.answer === "yes"}
-                    onChange={() => handleAnswerChange(question.id, "yes")}
-                  />
-                  Sí
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name={`question-${question.id}`}
-                    value="no"
-                    checked={question.answer === "no"}
-                    onChange={() => handleAnswerChange(question.id, "no")}
-                  />
-                  No
-                </label>
+          <div className="question-grid">
+            {questions.map((question) => (
+              <div key={question.id} className="question-card">
+                <p>{question.question}</p>
+                <div className="options">
+                  <label>
+                    <input
+                      type="radio"
+                      name={`question-${question.id}`}
+                      value="yes"
+                      checked={question.answer === "yes"}
+                      onChange={() => handleAnswerChange(question.id, "yes")}
+                    />
+                    Sí
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name={`question-${question.id}`}
+                      value="no"
+                      checked={question.answer === "no"}
+                      onChange={() => handleAnswerChange(question.id, "no")}
+                    />
+                    No
+                  </label>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
           <button onClick={calculateResult} className="send">Enviar</button>
           {result && <p className="result">{result}</p>}
         </div>
