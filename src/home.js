@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import './home.css';
+import axios from 'axios';
 
 const Home = () => {
   const [profileImage, setProfileImage] = useState('/images/default-profile.jpg');
@@ -68,16 +69,16 @@ const Home = () => {
   const [currentMPID, setCurrentMPID] = useState("");
   const [step, setStep] = useState("select");
   const [questions, setQuestions] = useState([
-    { id: 1, question: "¿Te ahogas a menudo?", answer: "" },
-    { id: 2, question: "¿Tienes tos persistente?", answer: "" },
-    { id: 3, question: "¿Has perdido peso últimamente?", answer: "" },
-    { id: 4, question: "¿Te sientes fatigado?", answer: "" },
-    { id: 5, question: "¿Tienes muchos mocos?", answer: "" },
-    { id: 6, question: "¿Tienes la nariz tapada?", answer: "" },
-    { id: 7, question: "¿Te duele la garganta?", answer: "" },
-    { id: 8, question: "¿Tienes fiebre?", answer: "" },
-    { id: 9, question: "¿Tienes dolor en el pecho?", answer: "" },
-    { id: 10, question: "¿Sientes silbidos al respirar?", answer: "" },
+    { id: 1, question: "T'afogues sovint?", answer: "" },
+    { id: 2, question: "Tens tos persistent?", answer: "" },
+    { id: 3, question: "Has perdut pes últimament?", answer: "" },
+    { id: 4, question: "Et sents fatigat?", answer: "" },
+    { id: 5, question: "Tens molts de mocs?", answer: "" },
+    { id: 6, question: "Tens el nas tapat?", answer: "" },
+    { id: 7, question: "Et fa mal la gola?", answer: "" },
+    { id: 8, question: "Tens febre?", answer: "" },
+    { id: 9, question: "Tens dolor toràcic?", answer: "" },
+    { id: 10, question: "Sents xiulets quan respires?", answer: "" },
   ]);
 
   const [result, setResult] = useState("");
@@ -88,6 +89,27 @@ const Home = () => {
       setProfileImage(savedProfileImage);
     }
   }, []);
+
+  const sendAnswersToBackend = async () => {
+    const answers = questions.map((q) => ({
+      question_id: q.id,
+      answer: q.answer,
+    }));
+  
+    const dataToSend = {
+      dni: "user_dni_here",  // Replace with actual DNI (you can fetch from the session or state)
+      mpid: selectedMPIDs,   // The selected MPIDs from state
+      answers: answers,      // The answers with 1 for 'yes' and 0 for 'no'
+      date: new Date().toISOString(), // Current date
+    };
+  
+    try {
+      const response = await axios.post('http://localhost:3000/add-symptoms', dataToSend);
+      console.log('Data sent to backend:', response.data);
+    } catch (error) {
+      console.error('Error sending data to backend:', error);
+    }
+  };
 
   const saveMPIDs = (mpids) => {
     Cookies.set("mpids", JSON.stringify(mpids), { expires: 365 });
@@ -110,7 +132,7 @@ const Home = () => {
 
   const handleAnswerChange = (id, answer) => {
     const updatedQuestions = questions.map((q) =>
-      q.id === id ? { ...q, answer } : q
+      q.id === id ? { ...q, answer: answer === "yes" ? 1 : 0 } : q
     );
     setQuestions(updatedQuestions);
   };

@@ -37,6 +37,61 @@ app.use(cors({
   credentials: true, // Include credentials (if needed)
 }));
 
+app.post('/add-symptoms', async (req, res) => {
+  // Destructure the request body
+  const { dni, mpids, answers, date } = req.body;
+
+  // Check for missing information
+  if (!dni || !mpids || !answers || !date) {
+    return res.status(400).json({ error: 'Missing information' });
+  }
+
+  try {
+    // Start a transaction
+    connection.beginTransaction((err) => {
+      if (err) {
+        console.error('Error starting transaction:', err.stack);
+        return res.status(500).json({ error: 'Failed to start transaction' });
+      }
+    
+      // Iterate over the selected MPIDs and insert data for each MPID
+      mpids.forEach((mpidValue) => {
+        // Prepare the SQL query for each MPID
+        const query = "INSERT INTO mpid_symptoms (dni, mpid, ofeg, tos_persistent, perdua_pes, fatiga, increment_mucositat, congestio_nasal, dolor_gola, febre, dolor_tor, xiulets, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+        // Execute the query for each MPID
+        connection.query(query, [dni, mpidValue, answers[0], answers[1], answers[2], answers[3], answers[4], answers[5], answers[6], answers[7], answers[8], answers[9], date], (err, rows) => {
+          if (err) {
+            console.error('Error inserting data:', err.stack);
+            return connection.rollback(() => {
+              res.status(500).json({ error: 'Failed to insert data' });
+            });
+          }
+    
+          // If this is the last MPID, commit the transaction
+          if (mpids.indexOf(mpidValue) === mpids.length - 1) {
+            connection.commit((err) => {
+              if (err) {
+                console.error('Error committing transaction:', err.stack);
+                return connection.rollback(() => {
+                  res.status(500).json({ error: 'Failed to commit transaction' });
+                });
+              }
+    
+              // Send success response
+              res.status(200).json({ message: 'User symptoms registered successfully' });
+            });
+          }
+        });
+      });
+    });    
+  } catch (err) {
+    console.error('Error during transaction:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 app.post('/get-usr-data', async(req, res) => {
   const { email } = req.body;
 
@@ -60,7 +115,7 @@ app.post('/get-usr-data', async(req, res) => {
 
       const usr = rows[0];
 
-      console.log(usr.formatted_dob);
+      //console.log(usr.formatted_dob);
 
       res.status(200).json({
         dni: usr.dni,
