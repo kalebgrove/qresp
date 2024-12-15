@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import './home.css';
 import axios from 'axios';
-import { UNSAFE_DataRouterStateContext } from 'react-router-dom';
 
 const Home = () => {
   const [profileImage, setProfileImage] = useState('/images/default-profile.jpg');
@@ -72,28 +71,27 @@ const Home = () => {
     }
   }, []);
 
+  const fetchUserData = async () => {
+    const userCookie = Cookies.get("user");
+    if (!userCookie) {
+      console.error("No se encontró la cookie 'user'.");
+      return null;
+    }
+    return JSON.parse(userCookie);
+  };
+
   const sendAnswersToBackend = async () => {
     const answers = questions.map((q) => ({
       question_id: q.id,
       answer: q.answer === "yes" ? 1 : 0,
     }));
 
-
-    let userC;
-    let user;
-
-
-    const fetchUserData = async () => {
-            userC = Cookies.get("user"); // Retrieve the user's cookie
-            user = JSON.parse(userC);
-    };
-
-    fetchUserData();
-
-
     try {
-      console.log(user.email);
-      const payload = (user.email);
+      const user = await fetchUserData();
+      if (!user) {
+        throw new Error("Usuario no disponible. Verifica la cookie 'user'.");
+      }
+
       const response = await fetch("http://localhost:3000/dni-usr", {
         method: 'GET',
         headers: {
@@ -103,12 +101,11 @@ const Home = () => {
 
       if (!response.ok) throw new Error("Failed to fetch user data.");
 
-      const data = await response.json(payload);
-
+      const data = await response.json();
       console.log(data.dni);
 
       const dataToSend = {
-        dni: data.dni, // Replace with actual DNI
+        dni: data.dni,
         mpid: selectedMPIDs,
         answers: answers,
         date: new Date().toISOString(),
@@ -120,10 +117,12 @@ const Home = () => {
       } catch (error) {
         console.error('Error sending data to backend:', error);
       }
-    } catch(err) {
+    } catch (err) {
       console.error(err);
+    } finally {
+      calculateResult();
+      setStep("result");
     }
-
   };
 
   const saveMPIDs = (mpids) => {
@@ -159,7 +158,6 @@ const Home = () => {
         ? `Consulta médica urgente recomendada con los MPIDs seleccionados (${selectedMPIDs.join(", ")})`
         : `Los MPIDs seleccionados (${selectedMPIDs.join(", ")}) no indican urgencia inmediata.`
     );
-    setStep("result");
   };
 
   return (
@@ -190,16 +188,7 @@ const Home = () => {
                 </option>
               ))}
             </select>
-            <button onClick={() => {
-              if (currentMPID && !selectedMPIDs.includes(currentMPID)) {
-                const updatedMPIDs = [...selectedMPIDs, currentMPID];
-                setSelectedMPIDs(updatedMPIDs);
-                Cookies.set("mpids", JSON.stringify(updatedMPIDs), { expires: 365 });
-              }
-              setCurrentMPID("");
-            }}>
-              Añadir
-            </button>
+            <button onClick={handleSelectMPID}>Añadir</button>
           </div>
           {selectedMPIDs.length > 0 && (
             <div className="selected-mpids">
@@ -207,11 +196,7 @@ const Home = () => {
               {selectedMPIDs.map((mpid) => (
                 <div key={mpid} className="mpid-item">
                   <span>{mpid}</span>
-                  <button onClick={() => {
-                    const updatedMPIDs = selectedMPIDs.filter((m) => m !== mpid);
-                    setSelectedMPIDs(updatedMPIDs);
-                    Cookies.set("mpids", JSON.stringify(updatedMPIDs), { expires: 365 });
-                  }}>x</button>
+                  <button onClick={() => handleDeselectMPID(mpid)}>x</button>
                 </div>
               ))}
               <button onClick={() => setStep("questionnaire")}>Continuar</button>
@@ -234,11 +219,7 @@ const Home = () => {
                       name={`q-${q.id}`}
                       value="yes"
                       checked={q.answer === "yes"}
-                      onChange={() => setQuestions(
-                        questions.map((ques) =>
-                          ques.id === q.id ? { ...ques, answer: "yes" } : ques
-                        )
-                      )}
+                      onChange={() => handleAnswerChange(q.id, "yes")}
                     />
                     Sí
                   </label>
@@ -248,11 +229,7 @@ const Home = () => {
                       name={`q-${q.id}`}
                       value="no"
                       checked={q.answer === "no"}
-                      onChange={() => setQuestions(
-                        questions.map((ques) =>
-                          ques.id === q.id ? { ...ques, answer: "no" } : ques
-                        )
-                      )}
+                      onChange={() => handleAnswerChange(q.id, "no")}
                     />
                     No
                   </label>
@@ -261,11 +238,49 @@ const Home = () => {
             ))}
           </div>
           <button onClick={sendAnswersToBackend} className="send">Enviar</button>
-          {result && <p className="result">{result}</p>}
         </div>
       )}
 
+      {step === "result" && (
+        <div className="result-section">
+          <div className="answer-group">
+            <h4>Respuestas Sí</h4>
+            <div className="answer-items-inline">
+              {questions
+                .filter((q) => q.answer === "yes")
+                .map((q) => (
+                  <div key={q.id} className="answer-item">
+                    {q.question}
+                  </div>
+                ))}
+            </div>
+          </div>
 
+          <div className="answer-group">
+            <h4>Respuestas No</h4>
+            <div className="answer-items-inline">
+              {questions
+                .filter((q) => q.answer === "no")
+                .map((q) => (
+                  <div key={q.id} className="answer-item">
+                    {q.question}
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          <div className="mpid-group">
+            <h4>MPIDs seleccionados:</h4>
+            <div className="mpid-list">
+              {selectedMPIDs.map((mpid, index) => (
+                <div key={index} className="mpid-item">{mpid}</div>
+              ))}
+            </div>
+          </div>
+
+          <div className="final-result">{result}</div>
+        </div>
+      )}
     </div>
   );
 };
