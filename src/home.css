@@ -431,19 +431,20 @@ button:active {
   margin: 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.3s ease;
-  flex: 0 1 auto;
+  flex-shrink: 0;
   max-width: 200px; /* Tamaño máximo */
-  white-space: nowrap; /* Evita saltos de línea */
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   gap: 8px; /* Espacio entre texto y botón */
+  position: relative; /* Asegura que el botón siempre esté posicionado */
 }
 
 .mpid-item span {
+  flex: 1; /* El texto ocupa todo el espacio disponible */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1; /* Ocupa el espacio disponible */
 }
 
 .mpid-item:hover {
@@ -452,15 +453,16 @@ button:active {
 }
 
 .mpid-item button {
+  flex-shrink: 0; /* Evita que el botón se reduzca */
   background: none;
   border: none;
   color: white;
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
-  flex-shrink: 0; /* Evita que el botón se reduzca */
-  margin-left: 8px; /* Espaciado entre texto y botón */
-  transition: color 0.2s ease;
+  margin-left: 8px;
+  position: relative;
+  z-index: 1; /* Asegura que esté por encima del texto */
 }
 
 .mpid-item button:hover {
